@@ -1,0 +1,114 @@
+@startuml
+
+' ========== TITULO ==========
+title
+<size:30><b><color:#0EA5E9>Ejercicio Práctico</color> <color:#64748B>|</color> <color:#1E40AF>🛍 Ordenes de Compra</color></b></size>
+<size:10>━━━━━━━━━━━━━━━━━━━━━━━━━━</size>
+<size: 11><color:#10B981>Sistema de gestión v1.0</color></size>
+<size:10><color:#6B7280>Java · Spring Boot · Hexagonal Architecture </color></size>
+end title
+
+' ========== DESCRIPCIÓN Y ESTRUCTURA DE CARPETAS ==========
+legend bottom right
+  <b><color:#1E40AF>📋 Descripción del Proyecto</color></b>
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━��━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Sistema de gestión de órdenes utilizando principios SOLID y Arquitectura Hexagonal.
+
+  <b>Funcionalidades:</b>
+  <color:#10B981>✓</color> Crear órdenes para clientes
+  <color:#10B981>✓</color> Agregar productos a la orden
+  <color:#10B981>✓</color> Calcular total de la orden
+  <color:#10B981>✓</color> Listar, confirmar, cancelar órdenes
+  <color:#10B981>✓</color> Gestión de clientes y productos
+  <color:#10B981>✓</color> Persistencia con JPA/PostgreSQL
+
+  <b>Patrones aplicados:</b> Hexagonal, Separación de capas, Value Objects
+
+  <b>Manejo de:</b> Excepciones personalizadas, Validaciones de dominio
+
+  <b><size:13><color:#1E40AF>📁 Estructura de Paquetes</color></size></b>
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <font:monospace><size:10>
+  <color:#0EA5E9><b>edu/ordermanager/</b></color>
+  <color:#64748B>│</color>
+  <color:#64748B>├──</color> 📁 <color:#10B981><b>domain/</b></color>
+  <color:#64748B>│    ├──</color> model/
+  <color:#64748B>│    ├──</color> enums/
+  <color:#64748B>│    └──</color> exception/
+  <color:#64748B>│</color>
+  <color:#64748B>├──</color> 📁 <color:#10B981><b>application/</b></color>
+  <color:#64748B>│    └──</color> service/
+  <color:#64748B>│</color>
+  <color:#64748B>├──</color> 📁 <color:#10B981><b>infrastructure/</b></color>
+  <color:#64748B>│    ├──</color> adapter/
+  <color:#64748B>│    ├──</color> config/
+  <color:#64748B>│    └──</color> exception/
+  <color:#64748B>│</color>
+  <color:#64748B>├──</color> 📁 <color:#10B981><b>common/</b></color>
+  <color:#64748B>│    └──</color> utils/
+  <color:#64748B>│</color>
+  <color:#64748B>└──</color> OrderManagerApplication.java
+end legend
+
+
+' Definición de clases básicas
+class Order {
+    - Long id
+    - Long customerId
+    - Status status
+    - List<OrderItem> items
+    - LocalDateTime createdAt
+    - LocalDateTime updatedAt
+    + BigDecimal getTotalAmount()
+}
+
+class OrderItem {
+    - Long productId
+    - int quantity
+    - BigDecimal unitPrice
+    - LocalDateTime createdAt
+    - LocalDateTime updatedAt
+    + BigDecimal getSubtotal()
+}
+
+class Product {
+    - Long id
+    - String name
+    - String description
+    - BigDecimal price
+    - LocalDateTime createdAt
+    - LocalDateTime updatedAt
+}
+
+class Customer {
+    - Long id
+    - String fullName
+    - String email
+    - LocalDateTime createdAt
+    - LocalDateTime updatedAt
+}
+
+enum Status {
+    CREATED
+    CONFIRMED
+    CANCELLED
+}
+
+' Relaciones
+Order "1" -- "N" OrderItem : contiene
+Order "*" -- "1" Customer : pertenece a
+OrderItem "*" -- "1" Product : referencia
+Order "1" ..> Status : usa
+
+' ========== ESTILOS ==========
+'left to right direction
+skinparam classAttributeIconSize 0
+skinparam classFontColor DarkBlue
+skinparam classBackgroundColor #F0F8FF
+skinparam shadowing true
+skinparam nodesep 100
+skinparam ranksep 150
+skinparam packageStyle folder
+'skinparam linetype ortho
+
+@enduml
