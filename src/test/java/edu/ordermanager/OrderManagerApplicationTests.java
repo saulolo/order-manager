@@ -1,4 +1,4 @@
-package edu.order_manager;
+package edu.ordermanager;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
