@@ -1,7 +1,8 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '4.0.3'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '4.0.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id("jacoco")
 }
 
 group = 'edu.order-manager'
@@ -9,35 +10,125 @@ version = '0.0.1-SNAPSHOT'
 description = 'Project to apply and evaluate hexagonal architecture and SOLID principles through order management.'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // ========== SPRING BOOT CORE ==========
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+
+    // ========== DATABASE ==========
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // ========== LOMBOK ==========
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // ========== DEV TOOLS ==========
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // ========== TESTING ==========
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+    }
+    finalizedBy(tasks.jacocoTestCoverageVerification)
+
+    classDirectories.setFrom(
+            files(
+                    classDirectories.files.collect {
+                        fileTree(it) {
+                            exclude(
+                                    // === Paquetes/capetas a excluir ===
+                                    "**/infrastructure/adapter/in/rest/handler/**",
+                                    "**/infrastructure/adapter/in/rest/controller/dto/response/**",
+                                    "**/infrastructure/adapter/out/persistence/jpa/mapper/**",
+                                    "**/exception/**",
+                                    "**/domain/enums/**",
+                                    "**/infrastructure/adapter/in/rest/mapper/**",
+                                    "**/domain/exception/**",
+                                    "**/infrastructure/adapter/in/rest/controller/**",
+                                    "**/infrastructure/adapter/out/persistence/jpa/**",
+                                    "**/infrastructure/util/**",
+                                    "**/infrastructure/config/**",
+                                    "**/domain/dto/**",
+                                    "**/common/**",
+                                    "**/OrderManagerApplication*"
+                            )
+                        }
+                    }
+            )
+    )
+}
+
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.test)
+    classDirectories.setFrom(
+            files(
+                    tasks.jacocoTestReport.classDirectories.files.collect {
+                        fileTree(it) {
+                            exclude(
+                                    "**/infrastructure/adapter/in/rest/handler/**",
+                                    "**/infrastructure/adapter/in/rest/controller/dto/response/**",
+                                    "**/infrastructure/adapter/out/persistence/jpa/mapper/**",
+                                    "**/exception/**",
+                                    "**/domain/enums/**",
+                                    "**/infrastructure/adapter/in/rest/mapper/**",
+                                    "**/domain/exception/**",
+                                    "**/infrastructure/adapter/in/rest/controller/**",
+                                    "**/infrastructure/adapter/out/persistence/jpa/**",
+                                    "**/infrastructure/util/**",
+                                    "**/infrastructure/config/**",
+                                    "**/domain/dto/**",
+                                    "**/common/**",
+                                    "**/OrderManagerApplication*"
+                            )
+                        }
+                    }
+            )
+    )
+    violationRules {
+        rule {
+            element = "BUNDLE"
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.05".toBigDecimal()
+            }
+        }
+    }
 }
