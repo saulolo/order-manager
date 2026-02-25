@@ -14,6 +14,7 @@ import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.repository.Pr
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,6 +46,11 @@ public class OrderJpaRepositoryAdapter implements OrderRepository {
                     .map(item -> {
                         ProductEntity product = productJpaRepository.findById(item.getProductId())
                                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+                        // Aquí asigna valores antes del mapeo al entity
+                        item.setUnitPrice(product.getPrice());
+                        item.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+
                         return OrderItemMapper.toEntity(item, product);
                     })
                     .collect(Collectors.toList());
