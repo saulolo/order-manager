@@ -20,6 +20,7 @@ public class OrderItem {
     Long productId;
     int quantity;
     BigDecimal unitPrice;
+    BigDecimal subtotal;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
