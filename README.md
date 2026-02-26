@@ -6,8 +6,7 @@ Este proyecto es una **API RESTful** para un sistema de gestión de órdenes de 
 La API permite a los usuarios **crear órdenes**, **confirmarlas**, **cancelarlas** y **consultarlas**, cumpliendo todas
 las reglas de negocio del dominio de órdenes de compra.
 
-La arquitectura se basa en el patrón **Hexagonal (Ports & Adapters)**, enfatizando la **separación de responsabilidades
-**,
+La arquitectura se basa en el patrón **Hexagonal (Ports & Adapters)**, enfatizando la **separación de responsabilidades**,
 estricta aplicación de **principios SOLID** y **Clean Code**.
 
 **_Autor: Saul Echeverri_**   
@@ -22,7 +21,7 @@ Hexagonal**, principios SOLID, y Clean Code en Java 17 + Spring Boot 3.
 
 Este repositorio es de carácter **educativo** y de práctica profesional, para entender y aplicar la gestión de órdenes
 desacoplada de infraestructura, usando **JUnit, Mockito, JaCoCo, Gradle, PostgreSQL** y buenas prácticas de pruebas
-automatizadas.
+unitarias.
 
 
 ---
@@ -76,7 +75,7 @@ desarrollo o cómo desplegarlo para su uso.
 
 Si deseas ejecutar tu proyecto en tu propio entorno local para pruebas o desarrollo, sigue estos pasos generales:
 
-1. **Configura PostgreSQLs**: Asegúrate de tener una base de datos PostgreSQL funcionando. Crea una base de datos con
+1. **Configura PostgreSQL**: Asegúrate de tener una base de datos PostgreSQL funcionando. Crea una base de datos con
    el nombre `db_order_manager` y las tablas usando `db/01_Tables.sql)`
 
 **Instrucciones para ejecutarlo desde DBeaver (PostgreSQL):**
@@ -164,7 +163,7 @@ order-manager/
 - **Application/Service:** Casos de uso desacoplados (no dependen de frameworks).
 - **Domain/Model:** Entidades y lógica de negocio, sin dependencias externas ni JPA.
 - **Port:** Interfaces para entrada y salida (“in” y “out”).
-- **Common:** Constantes de error, DTOs de respuesta, utilidades, config.
+- **Common:** Constantes de error, utilidades, config.
 - **Test:** Pruebas unitarias (alto coverage; ver Jacoco).
 - **Infrastructure:** Implementa detalles técnicos que permiten la comunicación con herramientas externas.
 
@@ -209,11 +208,17 @@ para el desarrollo eficiente de aplicaciones web.
 
 - **Java 17**: Se utiliza como el lenguaje de programación principal, aprovechando sus características más recientes
   para un código robusto y legible.
-- **Spring Boot**: Es el framework que facilita la creación de aplicaciones web y microservicios, optimizando el tiempo
+- **Spring Boot**: Es el framework que facilita la creación de aplicaciones web y microservicios, optimizando el tiempo 
+de dearrollo. 
 - **Gradle**: Es el framework que facilita la creación de aplicaciones web y microservicios, optimizando el tiempo
   de desarrollo a través de la autoconfiguración y el manejo de dependencias.
 - **Lombok**: Librería que elimina código repetitivo (getters, setters) mediante anotaciones para mantener las clases
   limpias.
+
+_**⚠️ NOTA IMPORTANTE**_: Use esta libreria en los POJO's (modelos) de la capa de dominio, y la razón es porque Lombok es una 
+dependencia de compilación y su trabajo termina cuando el código JAVA se convierte en Bytecode, cuando esto sucede, se 
+genera un archivo .class sin rastros de las anotaciones de lombok, es decir no rompe la regla arquitectónica ya que no 
+le da al POJO ninguna información sobre cómo debe de interactuar con la BD o la web.
 
 ### Gestión de Datos y Persistencia 🗃️
 
@@ -267,8 +272,8 @@ graph TD
     style API Hexagonal fill: #E8DAEF, stroke: #8E44AD, stroke-width: 2px;
     style Data fill: #FFF3E0, stroke: #F57C00, stroke-width: 2px;
     User -- " POST /order/api/v1/orders " --> RestController
-    User -- " PUT /order/api/v1/orders/{id}/confirm " --> RestController
-    User -- " PUT /order/api/v1/orders/{id}/cancel " --> RestController
+    User -- " PATCH /order/api/v1/orders/{id}/confirm " --> RestController
+    User -- " PATCH /order/api/v1/orders/{id}/cancel " --> RestController
     User -- " GET /order/api/v1/orders/{id} " --> RestController
     RestController -- " Llama al caso de uso (Service) " --> UseCase
     UseCase -- " Usa el puerto de salida " --> OutPort
@@ -293,7 +298,7 @@ graph TD
 
 ### Flujo de la API 🚀
 
-1. **Cliente** envía una solicitud HTTP (`POST`, `PUT`, `GET`) al endpoint correspondiente.
+1. **Cliente** envía una solicitud HTTP (`POST`, `PATCH`, `GET`) al endpoint correspondiente.
 2. **RestController** recibe la solicitud y la delega al caso de uso relevante.
 3. **Service / Caso de Uso** aplica las reglas de negocio y opera sobre el modelo dominio.
 4. **Puerto de Salida** abstrae el acceso a datos, separando el dominio de la infraestructura.
@@ -371,8 +376,8 @@ Es importante respetar los derechos de autor y las restricciones legales asociad
 
 ## Expresiones de Gratitud 🎁
 
-Quiero expresar mi más sincero agradecimiento a [IAS Software](https://www.ias.com.co/) y a su unidad de formación  
-liderado por el ingeniero **Manuel Cuevas**, por compartir su tiempo y conocimiento técnico.
+Quiero expresar mi más sincero agradecimiento a [IAS Software](https://www.ias.com.co/) y a su unidad de formación liderado por el ingeniero 
+**Manuel Cuevas**, por compartir su tiempo y conocimiento técnico.
 
 Este proyecto me ha permitido aplicar y expandir mis conocimientos en el desarrollo de APIs aplicando la 
 **Arquitectura Hexagonal** y en la metodología de pruebas de software, fortaleciendo mis habilidades en tecnologías con 
