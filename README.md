@@ -286,6 +286,17 @@ graph TD
     RestController -- " Respuesta HTTP (JSON) " --> User
 ```
 
+```mermaid
+graph TD
+    1(Dominio) --> 2(Application Service)
+    2 --> 3(Infrastructure / Adapter)
+    3 --> 4(Controller REST)
+    4 --> 5(Testing & Validation)
+    5 --> 6(Docker & Scripts)
+    6 --> 7(Documentación)
+
+```
+
 **Explicación:**
 
 - **Capa de Entrega (Delivery):** Cliente interactúa vía HTTP → Puerto de entrada.
