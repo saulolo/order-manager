@@ -1,6 +1,8 @@
 package edu.ordermanager.infrastructure.adapter.out.persistence.jpa.mapper;
 
 import edu.ordermanager.domain.model.Product;
+import edu.ordermanager.domain.vo.Description;
+import edu.ordermanager.domain.vo.Price;
 import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.entity.ProductEntity;
 
 import static edu.ordermanager.common.constants.Constants.NON_INSTANTIABLE_UTILITY_CLASS;
@@ -27,8 +29,8 @@ public final class ProductMapper {
         return Product.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .description(entity.getDescription())
-                .price(entity.getPrice())
+                .description(new Description(entity.getDescription()))
+                .price(new Price(entity.getPrice()))
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -46,8 +48,8 @@ public final class ProductMapper {
         return ProductEntity.builder()
                 .id(domain.getId())
                 .name(domain.getName())
-                .description(domain.getDescription())
-                .price(domain.getPrice())
+                .description(domain.getDescription().getValue())
+                .price(domain.getPrice().getValue())
                 .createdAt(domain.getCreatedAt())
                 .updatedAt(domain.getUpdatedAt())
                 .build();

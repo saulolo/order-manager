@@ -58,10 +58,7 @@ public class OrderMapper {
                 .map(OrderMapper::toDomainOrderItem)
                 .collect(Collectors.toList());
 
-        return Order.builder()
-                .customerId(dto.getCustomerId())
-                .items(items)
-                .build();
+        return Order.create(dto.getCustomerId(), items);
     }
 
     /**

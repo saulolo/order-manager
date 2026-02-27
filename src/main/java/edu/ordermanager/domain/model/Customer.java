@@ -1,5 +1,6 @@
 package edu.ordermanager.domain.model;
 
+import edu.ordermanager.domain.vo.Email;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,16 +10,15 @@ import java.time.LocalDateTime;
  * Representa un cliente del sistema.
  */
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Customer {
 
     Long id;
     String fullName;
-    String email;
+    Email email;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 

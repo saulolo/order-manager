@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
  * Representa un ítem de una orden, asociado a un producto y cantidad.
  */
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

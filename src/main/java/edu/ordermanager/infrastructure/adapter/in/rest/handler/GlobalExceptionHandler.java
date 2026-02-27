@@ -1,6 +1,7 @@
 package edu.ordermanager.infrastructure.adapter.in.rest.handler;
 
 import edu.ordermanager.domain.exception.CustomerNotFoundException;
+import edu.ordermanager.domain.exception.OrderDomainException;
 import edu.ordermanager.domain.exception.OrderNotFoundException;
 import edu.ordermanager.infrastructure.adapter.in.rest.controller.dto.response.ApiResponseDTO;
 import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.exception.ApiException;
@@ -111,6 +112,28 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()
                 ));
     }
+
+    /**
+     * Maneja excepciones de negocio del dominio de órdenes.
+     * <p>
+     * Devuelve error 400 (bad request) con el mensaje y detalles de la excepción.
+     *
+     * @param ex      excepción de dominio lanzada por reglas de Order
+     * @param request petición HTTP actual
+     * @return respuesta de error estandarizada para violaciones de reglas de negocio
+     */
+    @ExceptionHandler(OrderDomainException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleOrderDomainException(OrderDomainException ex, HttpServletRequest request) {
+        log.warn("Error de dominio en orden: {} - Path: {}", ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.badRequest().body(
+                ApiResponseDTO.error(
+                        ex.getMessage(),
+                        ORDER_DOMAIN_ERROR,
+                        request.getRequestURI()
+                )
+        );
+    }
+
 
     /**
      * Maneja errores no controlados (genéricos).
