@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static edu.ordermanager.common.constants.Constants.PRODUCT_NOT_FOUND;
+
 @Repository
 @RequiredArgsConstructor
 public class OrderJpaRepositoryAdapter implements OrderRepository {
@@ -45,11 +47,7 @@ public class OrderJpaRepositoryAdapter implements OrderRepository {
             itemEntities = order.getItems().stream()
                     .map(item -> {
                         ProductEntity product = productJpaRepository.findById(item.getProductId())
-                                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
-
-                        // Aquí asigna valores antes del mapeo al entity
-                        item.setUnitPrice(product.getPrice());
-                        item.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+                                .orElseThrow(() -> new IllegalArgumentException(PRODUCT_NOT_FOUND));
 
                         return OrderItemMapper.toEntity(item, product);
                     })

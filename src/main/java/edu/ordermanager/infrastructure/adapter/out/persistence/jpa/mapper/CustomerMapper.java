@@ -1,6 +1,7 @@
 package edu.ordermanager.infrastructure.adapter.out.persistence.jpa.mapper;
 
 import edu.ordermanager.domain.model.Customer;
+import edu.ordermanager.domain.vo.Email;
 import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.entity.CustomerEntity;
 
 import static edu.ordermanager.common.constants.Constants.NON_INSTANTIABLE_UTILITY_CLASS;
@@ -28,7 +29,7 @@ public final class CustomerMapper {
         return Customer.builder()
                 .id(entity.getId())
                 .fullName(entity.getFullName())
-                .email(entity.getEmail())
+                .email(new Email(entity.getEmail()))
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -47,7 +48,7 @@ public final class CustomerMapper {
         return CustomerEntity.builder()
                 .id(domain.getId())
                 .fullName(domain.getFullName())
-                .email(domain.getEmail())
+                .email(domain.getEmail().getValue())
                 .createdAt(domain.getCreatedAt())
                 .updatedAt(domain.getUpdatedAt())
                 .build();
