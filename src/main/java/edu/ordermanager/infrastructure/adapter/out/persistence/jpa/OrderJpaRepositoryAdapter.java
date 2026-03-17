@@ -12,16 +12,13 @@ import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.repository.Cu
 import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.repository.OrderJpaRepository;
 import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.repository.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static edu.ordermanager.common.constants.Constants.PRODUCT_NOT_FOUND;
 
-@Repository
 @RequiredArgsConstructor
 public class OrderJpaRepositoryAdapter implements OrderRepository {
 

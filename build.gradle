@@ -31,6 +31,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 
+    //========== DATABASE PARA MONGO DB==========
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
     // ========== DATABASE ==========
     runtimeOnly 'org.postgresql:postgresql'
 
