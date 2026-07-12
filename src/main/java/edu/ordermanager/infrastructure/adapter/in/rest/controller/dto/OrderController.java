@@ -40,8 +40,8 @@ public class OrderController {
      */
     @PostMapping
     public ResponseEntity<ApiResponseDTO<OrderResponseDTO>> createOrder(@Valid @RequestBody OrderRequestDTO orderRequestDTO) {
-        Order order = OrderMapper.toDomain(orderRequestDTO);
-        Order createdOrder = createOrderService.createOrder(order.getCustomerId(), order.getItems());
+        Order createdOrder = createOrderService.createOrder(orderRequestDTO);
+
         List<OrderItemResponseDTO> itemDTOs = OrderMapper.toItemResponseDTOList(createdOrder.getItems());
         OrderResponseDTO responseDTO = OrderMapper.toResponseDTO(createdOrder, itemDTOs);
 
@@ -84,6 +84,8 @@ public class OrderController {
         );
         return ResponseEntity.ok(apiResponse);
     }
+
+    //TODO: voy en el min 43:14, ya cre el controlador completo
 
     /**
      * Actualiza el estado de una orden (CONFIRMED o CANCELLED).

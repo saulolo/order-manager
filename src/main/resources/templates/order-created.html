@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Estado de tu orden creado</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+<h2 style="color: #4CAF50;">✅ ¡Tu orden fue creada exitosamente!</h2>
+<p>Hola, gracias por tu compra.</p>
+<table style="border-collapse: collapse; width: 100%;">
+    <tr style="background-color: #f2f2f2;">
+        <th style="padding: 8px; border: 1px solid #ddd;">Orden #</th>
+        <th style="padding: 8px; border: 1px solid #ddd;">Estado</th>
+        <th style="padding: 8px; border: 1px solid #ddd;">Total</th>
+        <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
+    </tr>
+    <tr>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align:center;">${orderId}</td>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align:center;">${status}</td>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align:center;">$${total}</td>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align:center;">${createdAt}</td>
+    </tr>
+</table>
+<br/>
+<p style="color: #888; font-size: 12px;">Este es un correo automático, por favor no respondas.</p>
+</body>
+</html>

@@ -9,6 +9,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(
         basePackages = "edu.ordermanager.infrastructure.adapter.out.persistence.mongo.repository"
 )
-public class MongoConfig {
+public class MongoConfiguration {
 
 }

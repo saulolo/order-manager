@@ -25,6 +25,7 @@ public class Order {
 
     Long id;
     Long customerId;
+    String customerEmail;
     Status status;
     List<OrderItem> items;
     LocalDateTime createdAt;
@@ -33,15 +34,17 @@ public class Order {
 
     /**
      * Garantiza que la orden tenga al menos un producto.
-     * @param customerId Id del cliente.
-     * @param items Lista de ítems (productos), debe tener al menos uno.
+     * @param customerId    Id del cliente.
+     * @param customerEmail Email del cliente para notificaciones.
+     * @param items         Lista de ítems (productos), debe tener al menos uno.
      * @return Order válida.
      */
-    public static Order create(Long customerId, List<OrderItem> items) {
+    public static Order create(Long customerId, String customerEmail, List<OrderItem> items) {
         if (items == null || items.isEmpty()) throw new OrderDomainException(ORDER_MINIMUM_PRODUCT_REQUIRED);
 
         return Order.builder()
                 .customerId(customerId)
+                .customerEmail(customerEmail)
                 .items(items)
                 .status(Status.CREATED)
                 .createdAt(LocalDateTime.now())

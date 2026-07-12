@@ -53,12 +53,12 @@ public class OrderMapper {
     /**
      * Convierte un OrderRequestDTO a Order (modelo de dominio).
      */
-    public static Order toDomain(OrderRequestDTO dto) {
+    public static Order toDomain(OrderRequestDTO dto, String customerEmail) {
         List<OrderItem> items = dto.getItems().stream()
                 .map(OrderMapper::toDomainOrderItem)
                 .collect(Collectors.toList());
 
-        return Order.create(dto.getCustomerId(), items);
+        return Order.create(dto.getCustomerId(), customerEmail ,items);
     }
 
     /**
