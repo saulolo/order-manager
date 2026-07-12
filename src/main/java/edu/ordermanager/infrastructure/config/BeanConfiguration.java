@@ -4,6 +4,7 @@ import edu.ordermanager.application.service.CreateOrderService;
 import edu.ordermanager.application.service.GetOrderService;
 import edu.ordermanager.application.service.UpdateOrderStatusService;
 import edu.ordermanager.domain.port.out.CustomerRepository;
+import edu.ordermanager.domain.port.out.EmailService;
 import edu.ordermanager.domain.port.out.OrderRepository;
 import edu.ordermanager.domain.port.out.ProductRepository;
 import edu.ordermanager.infrastructure.adapter.out.persistence.jpa.OrderJpaRepositoryAdapter;
@@ -42,8 +43,9 @@ public class BeanConfiguration {
     @Bean
     public CreateOrderService createOrderService(OrderRepository orderRepository,
                                                  CustomerRepository customerRepository,
-                                                 ProductRepository productRepository) {
-        return new CreateOrderService(orderRepository, customerRepository, productRepository);
+                                                 ProductRepository productRepository,
+                                                 EmailService emailService) {
+        return new CreateOrderService(orderRepository, customerRepository, productRepository, emailService);
     }
 
     /**

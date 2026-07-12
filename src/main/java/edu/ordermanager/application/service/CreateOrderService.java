@@ -2,12 +2,17 @@ package edu.ordermanager.application.service;
 
 import edu.ordermanager.domain.exception.CustomerNotFoundException;
 import edu.ordermanager.domain.exception.ProductNotFoundException;
+import edu.ordermanager.domain.model.Customer;
 import edu.ordermanager.domain.model.Order;
 import edu.ordermanager.domain.model.OrderItem;
+import edu.ordermanager.domain.model.Product;
 import edu.ordermanager.domain.port.in.CreateOrderUseCase;
 import edu.ordermanager.domain.port.out.CustomerRepository;
+import edu.ordermanager.domain.port.out.EmailService;
 import edu.ordermanager.domain.port.out.OrderRepository;
 import edu.ordermanager.domain.port.out.ProductRepository;
+import edu.ordermanager.infrastructure.adapter.in.rest.controller.dto.request.OrderRequestDTO;
+import edu.ordermanager.infrastructure.adapter.in.rest.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +30,7 @@ public class CreateOrderService implements CreateOrderUseCase {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final EmailService emailService;
 
 
     /**
@@ -35,40 +41,38 @@ public class CreateOrderService implements CreateOrderUseCase {
      * @return Orden creada.
      */
     @Override
-    public Order createOrder(Long customerId, List<OrderItem> items) {
-        log.info("Iniciando creación de orden para cliente {} con {} ítems.", customerId, items == null ? 0 : items.size());
+    public Order createOrder(OrderRequestDTO dto) {
+        log.info("Iniciando creación de orden para cliente {}...", dto.getCustomerId());
 
-        // Validar existencia de cliente
-        customerRepository.findById(customerId)
-                .orElseThrow(() -> {
-                    log.warn("Cliente no encontrado: {}", customerId);
-                    return new CustomerNotFoundException(String.format(CUSTOMER_NOT_FOUND, customerId));
-                });
+        // Busca el cliente y saca el email (como String)
+        Customer customer = customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new CustomerNotFoundException("Cliente no encontrado"));
+        String customerEmail = customer.getEmail().getValue();
 
-        // Construir la lista de OrderItem, trayendo el precio actualizado de producto
-        List<OrderItem> validatedItems = items.stream().map(oi -> {
-            var product = productRepository.findById(oi.getProductId())
-                    .orElseThrow(() -> {
-                        log.warn("Producto no encontrado: {}", oi.getProductId());
-                        return new ProductNotFoundException(String.format(PRODUCT_NOT_FOUND, oi.getProductId()));
-                    });
-            return OrderItem.builder()
-                    .productId(oi.getProductId())
-                    .quantity(oi.getQuantity())
-                    .unitPrice(product.getPrice().getValue())
-                    .subtotal(product.getPrice().getValue().multiply(BigDecimal.valueOf(oi.getQuantity())))
-                    .build();
-        }).collect(Collectors.toList());
+        // Arma los items validando producto y asignando precios
+        List<OrderItem> validatedItems = dto.getItems().stream()
+                .map(oi -> {
+                    // Busca el producto y saca el precio
+                    Product product = productRepository.findById(oi.getProductId())
+                            .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado: " + oi.getProductId()));
+                    BigDecimal unitPrice = product.getPrice().getValue();
+                    BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(oi.getQuantity()));
+                    return OrderItem.builder()
+                            .productId(oi.getProductId())
+                            .quantity(oi.getQuantity())
+                            .unitPrice(unitPrice)
+                            .subtotal(subtotal)
+                            .build();
+                })
+                .collect(Collectors.toList());
 
-        log.debug("Todos los productos validados y precios asignados para la orden.");
-
-        // Crea la orden usando el métod de dominio (valida items)
-        Order order = Order.create(customerId, validatedItems);
-
+        // Crea y guarda la orden
+        Order order = Order.create(dto.getCustomerId(), customerEmail, validatedItems);
         Order savedOrder = orderRepository.save(order);
 
         log.info("Orden creada exitosamente con ID {}", savedOrder.getId());
 
+        emailService.sendOrderCreatedEmail(savedOrder);
         return savedOrder;
     }
 }
